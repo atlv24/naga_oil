@@ -1,8 +1,9 @@
 use indexmap::IndexMap;
 use naga::{
-    Arena, AtomicFunction, Block, Constant, EntryPoint, Expression, Function, FunctionArgument,
-    FunctionResult, GatherMode, GlobalVariable, Handle, ImageQuery, LocalVariable, Module,
-    Override, SampleLevel, Span, Statement, StructMember, SwitchCase, Type, TypeInner, UniqueArena,
+    diagnostic_filter::DiagnosticFilterNode, Arena, AtomicFunction, Block, Constant, EntryPoint,
+    Expression, Function, FunctionArgument, FunctionResult, GatherMode, GlobalVariable, Handle,
+    ImageQuery, LocalVariable, Module, Override, SampleLevel, Span, Statement, StructMember,
+    SwitchCase, Type, TypeInner, UniqueArena,
 };
 use std::{cell::RefCell, rc::Rc};
 
@@ -30,6 +31,8 @@ pub struct DerivedModule<'a> {
     globals: Arena<GlobalVariable>,
     functions: Arena<Function>,
     pipeline_overrides: Arena<Override>,
+    diagnostic_filters: Arena<DiagnosticFilterNode>,
+    diagnostic_filter_leaf: Option<Handle<DiagnosticFilterNode>>,
 }
 
 impl<'a> DerivedModule<'a> {
@@ -448,6 +451,19 @@ impl<'a> DerivedModule<'a> {
                     | Statement::Continue
                     | Statement::Kill
                     | Statement::Barrier(_) => stmt.clone(),
+                    Statement::ImageAtomic {
+                        image,
+                        coordinate,
+                        sample,
+                        fun,
+                        value,
+                    } => Statement::ImageAtomic {
+                        image: map_expr!(image),
+                        coordinate: map_expr!(coordinate),
+                        sample: map_expr!(sample),
+                        fun: *fun,
+                        value: map_expr!(value),
+                    },
                 }
             })
             .collect();
@@ -769,6 +785,7 @@ impl<'a> DerivedModule<'a> {
             expressions: Rc::try_unwrap(expressions).unwrap().into_inner(),
             named_expressions,
             body,
+            diagnostic_filter_leaf: None,
         }
     }
 
@@ -842,6 +859,8 @@ impl<'a> From<DerivedModule<'a>> for naga::Module {
             special_types: Default::default(),
             entry_points: Default::default(),
             overrides: derived.pipeline_overrides,
+            diagnostic_filters: derived.diagnostic_filters,
+            diagnostic_filter_leaf: derived.diagnostic_filter_leaf,
         }
     }
 }
