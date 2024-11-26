@@ -1,20 +1,20 @@
 
 [patch.crates-io.naga]
 git = "https://github.com/atlv24/wgpu"
-rev = "67e02c38c31680c7405adaa48b83266bce4cdc98"
+rev = "b4a0f0980d1b772c9fb4fc691ec59a655f990083"
 #path = "../wgpu/naga"
 
 [patch."https://github.com/gfx-rs/naga".naga]
 git = "https://github.com/atlv24/wgpu"
-rev = "67e02c38c31680c7405adaa48b83266bce4cdc98"
+rev = "b4a0f0980d1b772c9fb4fc691ec59a655f990083"
 #path = "../wgpu/naga"
 
 [patch.crates-io.wgpu]
 git = "https://github.com/atlv24/wgpu"
-rev = "67e02c38c31680c7405adaa48b83266bce4cdc98"
+rev = "b4a0f0980d1b772c9fb4fc691ec59a655f990083"
 #path = "../wgpu/wgpu"
 
 [patch.crates-io.wgpu-types]
 git = "https://github.com/atlv24/wgpu"
-rev = "67e02c38c31680c7405adaa48b83266bce4cdc98"
+rev = "b4a0f0980d1b772c9fb4fc691ec59a655f990083"
 #path = "../wgpu/wgpu-types"
